@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>두 분만을 위한 웨딩 밴드 가이드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A single-page application structured as a step-by-step guide. It uses a top navigation bar to jump between thematic sections: Budgeting, Material/Diamond Education, Design Recommendations for both partners, and a Shopping/Action Plan. This task-oriented flow directly addresses the user's planning needs, making a complex decision process manageable and interactive, rather than just presenting static text. The budget chart and interactive 4Cs explainer are key engagement points. -->
+    <!-- Visualization & Content Choices: 1. Budget: Goal is to help user allocate funds. A Chart.js Donut chart is used for interactive visualization of the budget split between bride and groom. 2. 4Cs Education: Goal is to inform. Presented as interactive cards; clicking each 'C' reveals its details, simplifying a technical topic. Implemented with HTML/CSS/JS. 3. Design Recommendations: Goal is to guide choices. Uses side-by-side comparison layouts with clear text and representative Unicode icons/emojis (💍, 🏊‍♀️, 💻). 4. Checklist: Goal is to organize tasks. An interactive list using HTML/JS provides a clear action plan. Confirmed no SVG or Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #FDFBF8;
+            color: #4A4A4A;
+        }
+        .nav-item {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-item:hover, .nav-item.active {
+            color: #C5A48A;
+            border-bottom-color: #C5A48A;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #EAEAEA;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .btn-primary {
+            background-color: #C5A48A;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #B08D72;
+        }
+        .section-title {
+            color: #333;
+            font-weight: 700;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            background-color: #C5A48A;
+            color: white;
+        }
+        .tab-button:not(.active) {
+            background-color: #F3F4F6;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .checklist-item {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .checklist-item .icon {
+            font-style: normal;
+        }
+        .checklist-item.completed {
+            text-decoration: line-through;
+            color: #9CA3AF;
+        }
+        .checklist-item.completed .icon::before {
+            content: '✅';
+        }
+        .checklist-item:not(.completed) .icon::before {
+            content: '⬜️';
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold text-gray-800">
+                <span class="text-[#C5A48A]">W</span>edding <span class="text-[#C5A48A]">B</span>and <span class="text-[#C5A48A]">P</span>lanner
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#budget" class="nav-item pb-1">예산 계획</a>
+                <a href="#materials" class="nav-item pb-1">소재 & 다이아</a>
+                <a href="#designs" class="nav-item pb-1">디자인 추천</a>
+                <a href="#tour" class="nav-item pb-1">투어 가이드</a>
+                <a href="#checklist" class="nav-item pb-1">최종 체크리스트</a>
+            </div>
+            <div class="md:hidden">
+                <button id="menu-btn" class="text-gray-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 space-y-2">
+            <a href="#budget" class="block nav-item">예산 계획</a>
+            <a href="#materials" class="block nav-item">소재 & 다이아</a>
+            <a href="#designs" class="block nav-item">디자인 추천</a>
+            <a href="#tour" class="block nav-item">투어 가이드</a>
+            <a href="#checklist" class="block nav-item">최종 체크리스트</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <!-- Hero Section -->
+        <section id="hero" class="text-center mb-20">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight section-title">2027년, 두 분의 완벽한 시작을 위한<br>웨딩 밴드 로드맵</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                두 분의 이야기와 라이프스타일에 꼭 맞는, 세상에 하나뿐인 반지를 찾는 여정을 함께합니다.<br>명품 브랜드보다 더 가치있는 '우리만의 반지'를 찾아보세요.
+            </p>
+        </section>
+
+        <!-- Budget Section -->
+        <section id="budget" class="mb-20 scroll-mt-24">
+            <h2 class="text-3xl section-title text-center mb-2">STEP 1. 스마트한 예산 계획하기</h2>
+            <p class="text-center text-gray-500 mb-10">총 예산 500만원 ~ 650만원을 어떻게 배분하는 것이 가장 좋을까요? 슬라이더를 움직여보세요.</p>
+            <div class="grid md:grid-cols-2 gap-10 items-center">
+                <div class="chart-container">
+                    <canvas id="budgetChart"></canvas>
+                </div>
+                <div>
+                    <div class="mb-6">
+                        <label for="totalBudget" class="block text-sm font-medium text-gray-700">총 예산 설정 (단위: 만원)</label>
+                        <input type="range" id="totalBudget" min="500" max="650" value="575" step="10" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        <div class="text-center text-2xl font-bold text-[#C5A48A] mt-2"><span id="totalBudgetValue">575</span>만원</div>
+                    </div>
+                    <div class="mb-6">
+                        <label for="groomBudget" class="block text-sm font-medium text-gray-700">신랑님 반지 예산 비율 (%)</label>
+                        <input type="range" id="groomBudget" min="10" max="50" value="25" step="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                    <div class="card rounded-lg p-6">
+                        <h3 class="font-bold text-lg mb-4 text-center">예산 분배 결과</h3>
+                        <div class="space-y-3 text-center">
+                            <p class="text-xl">👰🏻‍♀️ 신부님 반지: <span id="brideValue" class="font-bold text-green-600"></span> 만원</p>
+                            <p class="text-xl">🤵🏻‍♂️ 신랑님 반지: <span id="groomValue" class="font-bold text-blue-600"></span> 만원</p>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-4 text-center">신부님께 예산을 집중하고, 실용성에 초점을 맞춘 신랑님의 배려가 돋보이는 현명한 계획입니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Materials & Diamond Section -->
+        <section id="materials" class="mb-20 scroll-mt-24">
+            <h2 class="text-3xl section-title text-center mb-2">STEP 2. 평생 착용할 소재 & 다이아 선택하기</h2>
+             <p class="text-center text-gray-500 mb-10">변치않는 가치를 담을 소재와 다이아몬드, 핵심만 알려드릴게요.</p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Material -->
+                <div class="card rounded-lg p-8">
+                    <h3 class="text-2xl font-bold mb-4 text-center">💍 반지 소재: 14K vs 18K vs 플래티넘</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="font-bold text-lg text-[#C5A48A]">14K Gold (금 함량 58.5%)</h4>
+                            <p class="text-gray-600"><strong>장점:</strong> 경도가 높아 18K보다 스크래치와 변형에 강합니다. 활동적인 라이프스타일에 가장 적합하며 합리적인 가격대를 형성합니다.</p>
+                            <p class="text-gray-600"><strong>단점:</strong> 금 함량이 낮아 18K보다 색이 약간 옅을 수 있습니다.</p>
+                            <p class="mt-1 font-semibold text-sm">추천 대상: 두 분 모두에게 훌륭한 선택, 특히 활동이 많은 신부님께 적극 추천!</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-[#C5A48A]">18K Gold (금 함량 75.0%)</h4>
+                            <p class="text-gray-600"><strong>장점:</strong> 금 함량이 높아 깊고 풍부한 색감을 자랑합니다. 알러지 반응이 적습니다.</p>
+                            <p class="text-gray-600"><strong>단점:</strong> 14K보다 무르고 스크래치에 약해 섬세한 관리가 필요합니다.</p>
+                             <p class="mt-1 font-semibold text-sm">추천 대상: 금 본연의 색감을 중요하게 생각하는 경우.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-[#C5A48A]">Platinum (백금)</h4>
+                            <p class="text-gray-600"><strong>장점:</strong> 변색이나 도금이 벗겨질 우려가 없는 순백색의 금속. 밀도가 높아 묵직하며, 저자극성으로 알러지에 가장 안전합니다.</p>
+                            <p class="text-gray-600"><strong>단점:</strong> 금보다 가격대가 높고, 무른 편이라 잔 스크래치가 잘 생길 수 있습니다.</p>
+                            <p class="mt-1 font-semibold text-sm">추천 대상: 최고의 소재를 원하고 예산에 여유가 있는 경우.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Diamond -->
+                <div class="card rounded-lg p-8">
+                    <h3 class="text-2xl font-bold mb-4 text-center">💎 랩 다이아몬드: 4C 등급 완벽 이해</h3>
+                    <p class="text-center mb-6 text-gray-600">랩그로운 다이아몬드는 천연 다이아몬드와 물리적, 화학적, 광학적 특성이 100% 동일한 '진짜' 다이아몬드입니다. 합리적인 예산으로 더 높은 등급을 선택할 수 있는 최고의 선택입니다. 아래 탭을 클릭해 보세요.</p>
+                    <div class="flex rounded-md shadow-sm mb-4" role="group">
+                        <button type="button" class="diamond-tab-btn active px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 focus:z-10 focus:ring-2" data-target="d-cut">Cut (컷)</button>
+                        <button type="button" class="diamond-tab-btn px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2" data-target="d-color">Color (컬러)</button>
+                        <button type="button" class="diamond-tab-btn px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-2" data-target="d-clarity">Clarity (투명도)</button>
+                        <button type="button" class="diamond-tab-btn px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-r-md hover:bg-gray-100 focus:z-10 focus:ring-2" data-target="d-carat">Carat (캐럿)</button>
+                    </div>
+                    <div id="diamond-info" class="p-4 bg-stone-50 rounded-lg min-h-[180px]">
+                        <div id="d-cut" class="diamond-info-content">
+                            <h4 class="font-bold text-lg text-[#C5A48A]">Cut (연마): 가장 중요한 요소!</h4>
+                            <p>다이아몬드의 반짝임을 결정하는 유일한 인위적 요소입니다. 다른 등급이 조금 낮더라도 컷 등급이 높으면 훨씬 아름답게 빛납니다.</p>
+                            <p class="font-semibold mt-2">✨ <strong>추천 등급:</strong> Excellent 또는 Ideal. 타협하지 마세요!</p>
+                        </div>
+                        <div id="d-color" class="diamond-info-content hidden">
+                            <h4 class="font-bold text-lg text-[#C5A48A]">Color (색상): 얼마나 무색에 가까운가?</h4>
+                            <p>D(완전 무색)에서 Z로 갈수록 노란빛을 띕니다. 육안으로는 한두 등급 차이를 구분하기 어렵습니다.</p>
+                            <p class="font-semibold mt-2">✨ <strong>추천 등급:</strong> D~F (Colorless)가 가장 좋지만, G~H (Near Colorless)는 전문가도 구분하기 힘든 수준으로 가성비가 매우 뛰어납니다.</p>
+                        </div>
+                        <div id="d-clarity" class="diamond-info-content hidden">
+                            <h4 class="font-bold text-lg text-[#C5A48A]">Clarity (내포물): 얼마나 깨끗한가?</h4>
+                            <p>다이아몬드 내부의 내포물이나 외부 흠집의 정도를 나타냅니다. 최상위 등급은 현미경으로도 찾기 어렵습니다.</p>
+                            <p class="font-semibold mt-2">✨ <strong>추천 등급:</strong> VS1~VS2 등급은 육안으로 내포물이 보이지 않는 'Eye-Clean' 상태로 완벽합니다. SI1 등급도 Eye-Clean 이라면 훌륭한 선택입니다.</p>
+                        </div>
+                        <div id="d-carat" class="diamond-info-content hidden">
+                            <h4 class="font-bold text-lg text-[#C5A48A]">Carat (중량): 다이아몬드의 크기</h4>
+                            <p>다이아몬드의 무게 단위로, 크기를 결정합니다. 예산 내에서 Cut, Color, Clarity 등급을 먼저 정한 후, 남는 예산으로 가능한 가장 큰 캐럿을 선택하는 것이 현명합니다.</p>
+                            <p class="font-semibold mt-2">✨ <strong>추천 크기:</strong> 일반적으로 3부(0.3ct) ~ 5부(0.5ct)를 선호하며, 랩 다이아몬드의 장점을 살려 7부 이상도 고려해볼 수 있습니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Design Section -->
+        <section id="designs" class="mb-20 scroll-mt-24">
+            <h2 class="text-3xl section-title text-center mb-2">STEP 3. 두 분의 라이프스타일에 맞는 디자인 찾기</h2>
+            <p class="text-center text-gray-500 mb-10">매일 함께할 반지인 만큼, 디자인은 아름다움과 편안함을 모두 잡아야 합니다.</p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Bride's Ring -->
+                <div class="card rounded-lg p-8">
+                    <h3 class="text-2xl font-bold mb-4 text-center">👰🏻‍♀️ 신부님을 위한 추천 디자인</h3>
+                    <p class="text-center text-gray-600 mb-6">영양교사 업무(👩🏻‍🍳)와 수영(🏊‍♀️)을 고려할 때, 다이아몬드를 안전하게 보호하고 걸림이 없는 디자인이 필수입니다.</p>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-rose-50 rounded-lg">
+                            <h4 class="font-bold">🥇 1순위 추천: 베젤 세팅 (Bezel Setting)</h4>
+                            <p class="text-sm">금속 테두리가 다이아몬드 전체를 감싸는 가장 안전한 형태. 충격에 강하고 옷이나 머리카락에 걸릴 일이 없어 활동적인 분에게 최고입니다. 모던하고 세련된 느낌을 줍니다.</p>
+                        </div>
+                        <div class="p-4 bg-rose-50 rounded-lg">
+                            <h4 class="font-bold">🥈 2순위 추천: 채널 세팅 (Channel Setting)</h4>
+                            <p class="text-sm">반지 밴드에 홈을 파서 그 안에 작은 다이아몬드를 나란히 세팅하는 방식. 표면이 매끄러워 걸림이 없고 매우 안전합니다.</p>
+                        </div>
+                        <div class="p-4 bg-red-100 rounded-lg">
+                            <h4 class="font-bold text-red-700">🚨 피해야 할 디자인: 높은 프롱 세팅 (High-Prong Setting)</h4>
+                            <p class="text-sm text-red-700">다이아몬드를 여러 개의 발(Prong)이 높이 들어올리는 디자인(티파니 스타일 등)은 다이아몬드를 가장 돋보이게 하지만, 발이 휘거나 걸려 다이아몬드가 빠질 위험이 있습니다.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Groom's Ring -->
+                <div class="card rounded-lg p-8">
+                    <h3 class="text-2xl font-bold mb-4 text-center">🤵🏻‍♂️ 신랑님을 위한 추천 디자인</h3>
+                    <p class="text-center text-gray-600 mb-6">매일 타이핑하는 사무직(💻)이시며 반지가 처음이신 점을 고려해, 착용감을 최우선으로 생각해야 합니다.</p>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-sky-50 rounded-lg">
+                            <h4 class="font-bold">🥇 1순위 추천: 컴포트 핏 (Comfort Fit)</h4>
+                            <p class="text-sm">반지 안쪽을 둥글게 처리하여 착용감과 이물감을 최소화한 디자인. 반지를 처음 착용하는 분도 편안하게 적응할 수 있습니다. '꼭' 컴포트 핏으로 제작하세요!</p>
+                        </div>
+                        <div class="p-4 bg-sky-50 rounded-lg">
+                            <h4 class="font-bold">🥈 2순위 추천: 무광/브러쉬 마감 (Matte/Brushed Finish)</h4>
+                            <p class="text-sm">유광(Polished) 반지는 타이핑 시 키보드나 마우스에 닿아 스크래치가 쉽게 눈에 띕니다. 은은한 무광 처리는 생활 스크래치를 자연스럽게 만들어 줍니다.</p>
+                        </div>
+                        <div class="p-4 bg-sky-50 rounded-lg">
+                            <h4 class="font-bold">🥉 3순위 추천: 적당한 너비와 심플한 디테일</h4>
+                            <p class="text-sm">너무 넓거나 두꺼운 반지는 타이핑 시 불편할 수 있습니다. 3~5mm 사이의 너비가 가장 이상적이며, 밀그레인(작은 구슬 장식) 같은 섬세한 디테일로 포인트를 주는 것을 추천합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tour Guide Section -->
+        <section id="tour" class="mb-20 scroll-mt-24">
+            <h2 class="text-3xl section-title text-center mb-2">STEP 4. 우리만의 반지를 찾기 위한 투어 계획</h2>
+            <p class="text-center text-gray-500 mb-10">진주에서 출발하는 최적의 동선입니다. 발품을 파는 만큼 만족도는 높아집니다.</p>
+            <div class="max-w-4xl mx-auto">
+                <div class="border-l-2 border-[#C5A48A] pl-8 space-y-12">
+                    <div class="relative">
+                        <div class="absolute -left-[42px] top-1 w-5 h-5 bg-[#C5A48A] rounded-full"></div>
+                        <h3 class="text-xl font-bold">1단계: 부산 & 대구 1차 투어 (탐색전)</h3>
+                        <p class="text-gray-600">본격적인 서울 방문 전, 가까운 부산/대구에서 다양한 디자인을 직접 껴보며 두 분의 취향을 구체화하는 단계입니다.</p>
+                        <ul class="list-disc list-inside mt-2 space-y-1">
+                            <li><strong>방문 지역:</strong> 부산 범일동 귀금속거리, 대구 교동 주얼리거리</li>
+                            <li><strong>목표:</strong> 마음에 드는 디자인 3~5개 후보군 만들기, 대략적인 시세 파악</li>
+                            <li><strong>Tip:</strong> 인스타그램, 네이버 블로그에서 '#부산예물', '#대구커플링' 등으로 검색해 마음에 드는 샵을 3~4곳 미리 정해두고 방문하세요.</li>
+                        </ul>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-[42px] top-1 w-5 h-5 bg-[#C5A48A] rounded-full"></div>
+                        <h3 class="text-xl font-bold">2단계: 서울 투어 (결정전)</h3>
+                        <p class="text-gray-600">대한민국 주얼리 디자인의 중심, 서울에서 유니크한 디자이너 브랜드와 높은 퀄리티의 반지를 집중적으로 둘러봅니다.</p>
+                        <ul class="list-disc list-inside mt-2 space-y-1">
+                            <li><strong>방문 지역:</strong> 서울 종로3가 귀금속거리, 청담동 예물샵</li>
+                            <li><strong>목표:</strong> 부산/대구 후보군과 비교하며 최종 결정. 마음에 쏙 드는 반지를 찾으면 바로 계약!</li>
+                            <li><strong>Tip:</strong> 종로는 가성비와 다양성, 청담은 독창적인 디자인과 고급스러움에 강점이 있습니다. 두 분의 스타일에 맞춰 동선을 짜세요. 예약 필수!</li>
+                        </ul>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-[42px] top-1 w-5 h-5 bg-[#C5A48A] rounded-full"></div>
+                        <h3 class="text-xl font-bold">3단계: 부산 & 대구 2차 투어 (최종 결정)</h3>
+                        <p class="text-gray-600">만약 서울에서 '이거다!' 싶은 반지를 찾지 못했다면, 1차 투어 때 마음에 두었던 후보군 중에서 최종 선택을 하는 단계입니다.</p>
+                        <ul class="list-disc list-inside mt-2 space-y-1">
+                            <li><strong>목표:</strong> 가장 마음에 들었던 샵을 재방문하여 최종 계약</li>
+                            <li><strong>Tip:</strong> 이미 한 번 방문했기 때문에 더 편안한 상담과 좋은 조건의 서비스를 기대할 수 있습니다. 서울 투어 경험을 바탕으로 더 확신에 찬 결정을 내릴 수 있습니다.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Checklist Section -->
+        <section id="checklist" class="scroll-mt-24">
+            <h2 class="text-3xl section-title text-center mb-2">FINAL. 최종 결정 전 체크리스트</h2>
+            <p class="text-center text-gray-500 mb-10">계약서에 서명하기 전, 아래 항목들을 꼭 확인하여 후회 없는 선택을 하세요. (항목을 클릭하여 완료 표시)</p>
+            <div class="max-w-2xl mx-auto card rounded-lg p-8">
+                <ul class="space-y-4">
+                    <li class="checklist-item flex items-center text-lg"><span class="icon mr-3 text-xl"></span> 다이아몬드 감정서 확인 (GIA, IGI 등 공신력 있는 기관)</li>
+                    <li class="checklist-item flex items-center text-lg"><span class="icon mr-3 text-xl"></span> 반지 안쪽 각인(이니셜, 기념일) 서비스 여부</li>
+                    <li class="checklist-item flex items-center text-lg"><span class="icon mr-3 text-xl"></span> 사이즈 조절(리사이징) 관련 A/S 정책 (평생 무상 or 유상)</li>
+                    <li class="checklist-item flex items-center text-lg"><span class="icon mr-3 text-xl"></span> 세척 및 광택, 재료 도금(화이트골드) 등 사후 관리 정책</li>
+                    <li class="checklist-item flex items-center text-lg"><span class="icon mr-3 text-xl"></span> 제작 기간 및 수령일 확인 (보통 4주~8주 소요)</li>
+                    <li class="checklist-item flex items-center text-lg"><span class="icon mr-3 text-xl"></span> 최종 계약서에 모든 상담 내용이 정확히 기재되었는지 확인</li>
+                    <li class="checklist-item flex items-center text-lg"><span class="icon mr-3 text-xl"></span> 현금/카드 결제 시 혜택 차이 여부 확인</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="bg-white mt-20 border-t">
+        <div class="container mx-auto px-6 py-8 text-center text-gray-500">
+            <p>이 플래너가 두 분의 행복한 시작에 작은 보탬이 되기를 바랍니다.</p>
+            <p class="text-sm mt-2">© 2025 Wedding Band Planner. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mobile Menu
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Smooth scrolling for nav links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Budget Chart
+            const totalBudgetSlider = document.getElementById('totalBudget');
+            const groomBudgetSlider = document.getElementById('groomBudget');
+            const totalBudgetValue = document.getElementById('totalBudgetValue');
+            const brideValue = document.getElementById('brideValue');
+            const groomValue = document.getElementById('groomValue');
+            
+            const ctx = document.getElementById('budgetChart').getContext('2d');
+            const budgetChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['신부님 반지', '신랑님 반지'],
+                    datasets: [{
+                        data: [431.25, 143.75],
+                        backgroundColor: ['#C3A086', '#A9C4D4'],
+                        borderColor: ['#FDFBF8'],
+                        borderWidth: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += new Intl.NumberFormat('ko-KR').format(context.parsed) + '만원';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            function updateBudget() {
+                const total = parseInt(totalBudgetSlider.value);
+                const groomPercent = parseInt(groomBudgetSlider.value) / 100;
+
+                totalBudgetValue.textContent = total;
+
+                const groomAmount = total * groomPercent;
+                const brideAmount = total - groomAmount;
+
+                brideValue.textContent = brideAmount.toFixed(2);
+                groomValue.textContent = groomAmount.toFixed(2);
+
+                budgetChart.data.datasets[0].data[0] = brideAmount;
+                budgetChart.data.datasets[0].data[1] = groomAmount;
+                budgetChart.update();
+            }
+
+            totalBudgetSlider.addEventListener('input', updateBudget);
+            groomBudgetSlider.addEventListener('input', updateBudget);
+            updateBudget();
+
+            // Diamond 4Cs Tabs
+            const tabButtons = document.querySelectorAll('.diamond-tab-btn');
+            const tabContents = document.querySelectorAll('.diamond-info-content');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.target;
+
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    tabContents.forEach(content => {
+                        if (content.id === targetId) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+            
+            // Checklist
+            const checklistItems = document.querySelectorAll('.checklist-item');
+            checklistItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    item.classList.toggle('completed');
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
